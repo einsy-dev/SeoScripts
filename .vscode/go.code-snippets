@@ -1,0 +1,12 @@
+{
+  "fmt": {
+    "prefix": [
+      "fmt"
+    ],
+    "body": [
+      "fmt.Printf(\"%#+v\\n\", res)"
+    ],
+    "description": "",
+    "scope": "go"
+  }
+}
