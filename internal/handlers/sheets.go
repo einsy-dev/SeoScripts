@@ -1,48 +1,46 @@
 package handlers
 
 import (
+	"domains/internal/app"
 	"domains/internal/models"
 	"domains/internal/utils"
 	"encoding/json"
 	"fmt"
 
 	"github.com/gofiber/fiber/v3"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func Sheets(f *fiber.App) {
 	site := f.Group("/sheets")
 	site.Get("/", func(c fiber.Ctx) error {
-		var data [][]any
-		err := json.Unmarshal(c.Body(), &data)
+		var arr [][]any
+		err := json.Unmarshal(c.Body(), &arr)
 		if err != nil {
 			fmt.Println(err)
 			return c.SendString("Error: json.Unmarshal(c.Body(), &data)")
 		}
+		var data []map[string]any = utils.ParseValues(arr)
 
-		p := utils.ParseValues(data)
-		res := []models.Domain{}
-		for _, v := range p {
-			d := mapToDomain(v)
-			res = append(res, *d)
+		for _, d := range data {
+			var domain models.Domain
+			err := app.DB.Preload(clause.Associations).Where(models.Domain{Domain: d["Domain"].(string)}).FirstOrCreate(&domain).Error
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+			mapToDomain(d, &domain)
+			app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&domain)
 		}
 
-		// fmt.Println(res)
-		// app.DB.Create(res)
 		return c.SendString("GET request")
-	})
-	site.Post("/", func(c fiber.Ctx) error {
-		return c.SendString("POST request")
 	})
 }
 
-func mapToDomain(m map[string]any) *models.Domain {
-	d := models.Domain{}
-
-	comment := toString(m["About"].(map[string]any)["Comment"])
-	d.Comment = &comment
-	fmt.Println(*d.Comment)
-
-	return &d
+func mapToDomain(m map[string]any, target *models.Domain) {
+	temp, _ := json.Marshal(m)
+	json.Unmarshal(temp, target)
 }
 
 func toString(val any) string {

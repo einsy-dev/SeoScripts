@@ -1,10 +1,12 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Ahrefs struct {
 	gorm.Model
-	DomainID   uint
+	DomainID   uint `gorm:"uniqueIndex;not null"`
 	DR         *uint
 	Traffic    *uint
 	Age        *uint

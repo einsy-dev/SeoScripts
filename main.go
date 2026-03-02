@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/joho/godotenv"
 )
 
 type Status struct {
@@ -14,6 +15,12 @@ type Status struct {
 }
 
 func main() {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	models.Startup()
 
 	f := fiber.New()

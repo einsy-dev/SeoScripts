@@ -1,16 +1,22 @@
 package utils
 
+import "slices"
+
 func ParseValues(val [][]any) []map[string]any {
 	var g, k = getKeys(&val)
 	var res = []map[string]any{}
 	for _, row := range val[2:] {
 		var item = make(map[string]any)
 		for j, key := range k {
-			if m, ok := item[g[j]].(map[string]any); ok {
-				m[key] = row[j]
+			if g[j] != "" {
+				if m, ok := item[g[j]].(map[string]any); ok {
+					m[key] = row[j]
+				} else {
+					item[g[j]] = make(map[string]any)
+					item[g[j]].(map[string]any)[key] = row[j]
+				}
 			} else {
-				item[g[j]] = make(map[string]any)
-				item[g[j]].(map[string]any)[key] = row[j]
+				item[key] = row[j]
 			}
 		}
 		res = append(res, item)
@@ -19,6 +25,8 @@ func ParseValues(val [][]any) []map[string]any {
 	return res
 }
 
+var groups = []string{"Ahrefs", "Semrush", "Majestic", "Moz"}
+
 func getKeys(val *[][]any) (map[int]string, map[int]string) {
 	var m = make(map[int]string)
 	var memo string
@@ -26,7 +34,8 @@ func getKeys(val *[][]any) (map[int]string, map[int]string) {
 		if col == "" && memo == "" {
 			continue
 		}
-		if col != "" {
+
+		if slices.Contains(groups, col.(string)) {
 			memo = col.(string)
 		}
 		m[i] = memo

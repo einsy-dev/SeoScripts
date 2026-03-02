@@ -2,11 +2,15 @@ module domains
 
 go 1.25.1
 
-require gorm.io/driver/postgres v1.6.0
+require (
+	github.com/gofiber/fiber/v3 v3.0.0
+	github.com/joho/godotenv v1.5.1
+	gorm.io/driver/postgres v1.6.0
+	gorm.io/gorm v1.31.1
+)
 
 require (
 	github.com/andybalholm/brotli v1.2.0 // indirect
-	github.com/gofiber/fiber/v3 v3.0.0 // indirect
 	github.com/gofiber/schema v1.6.0 // indirect
 	github.com/gofiber/utils/v2 v2.0.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -28,5 +32,4 @@ require (
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.40.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
-	gorm.io/gorm v1.31.1 // indirect
 )

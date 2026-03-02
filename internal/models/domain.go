@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Domain struct {
 	gorm.Model
-	Domain   string `gorm:"uniqueIndex"`
+	Domain   string `gorm:"uniqueIndex;not null"`
 	Type     *string
 	Rel      *string
 	Comment  *string

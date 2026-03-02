@@ -1,10 +1,12 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Majestic struct {
 	gorm.Model
-	DomainID   uint
+	DomainID   uint `gorm:"uniqueIndex;not null"`
 	TF         *uint
 	CF         *uint
 	Topic      *string
