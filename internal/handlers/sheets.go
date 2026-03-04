@@ -14,6 +14,7 @@ import (
 
 func Sheets(f *fiber.App) {
 	site := f.Group("/sheets")
+
 	site.Get("/", func(c fiber.Ctx) error {
 		var arr [][]any
 		err := json.Unmarshal(c.Body(), &arr)
@@ -21,34 +22,50 @@ func Sheets(f *fiber.App) {
 			fmt.Println(err)
 			return c.SendString("Error: json.Unmarshal(c.Body(), &data)")
 		}
-		var data []map[string]any = utils.ParseValues(arr)
+		var val = utils.Values{}
+		val.New(arr)
+		val.ToMap()
 
-		for _, d := range data {
+		return c.SendString("Get")
+	})
+
+	site.Post("/", func(c fiber.Ctx) error {
+		var arr [][]any
+		err := json.Unmarshal(c.Body(), &arr)
+		if err != nil {
+			fmt.Println(err)
+			return c.SendString("Error: json.Unmarshal(c.Body(), &data)")
+		}
+		var val = utils.Values{}
+		val.New(arr)
+		var m = val.ToMap()
+
+		var data []models.Domain
+		for key, val := range m {
 			var domain models.Domain
-			err := app.DB.Preload(clause.Associations).Where(models.Domain{Domain: d["Domain"].(string)}).FirstOrCreate(&domain).Error
+			err := app.DB.Preload(clause.Associations).Where(models.Domain{Domain: key}).FirstOrCreate(&domain).Error
 			if err != nil {
 				fmt.Println(err)
 				return nil
 			}
-			mapToDomain(d, &domain)
-			app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&domain)
-		}
 
-		return c.SendString("GET request")
+			utils.MapToTarget(val, &domain)
+			console(val)
+			console(domain)
+
+			err = app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&domain).Error
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+			data = append(data, domain)
+		}
+		j, err := json.MarshalIndent(data, "", " ")
+		return c.Send(j)
 	})
 }
 
-func mapToDomain(m map[string]any, target *models.Domain) {
-	temp, _ := json.Marshal(m)
-	json.Unmarshal(temp, target)
-}
-
-func toString(val any) string {
-	switch v := val.(type) {
-	case string:
-		return v
-	case float64:
-		return fmt.Sprintf("%.0f", v)
-	}
-	return ""
+func console(v any) {
+	j, err := json.MarshalIndent(v, "", " ")
+	fmt.Println(string(j), err)
 }
