@@ -46,9 +46,7 @@ func Sheets(f *fiber.App) {
 				if len(route) == 1 {
 					val.Set(domain["Domain"].(string), k, domain[route[0]])
 				} else if domain[route[0]] != nil {
-					fmt.Println(domain[route[0]])
 					val.Set(domain["Domain"].(string), k, domain[route[0]].(map[string]any)[route[1]])
-					fmt.Println("OK")
 				}
 			}
 
@@ -89,9 +87,4 @@ func Sheets(f *fiber.App) {
 		j, err := json.MarshalIndent(data, "", " ")
 		return c.Send(j)
 	})
-}
-
-func console(v ...any) {
-	j, err := json.MarshalIndent(v, "", " ")
-	fmt.Println(string(j), err)
 }
