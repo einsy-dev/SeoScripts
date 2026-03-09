@@ -6,6 +6,7 @@ import (
 	"domains/internal/utils"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -22,11 +23,38 @@ func Sheets(f *fiber.App) {
 			fmt.Println(err)
 			return c.SendString("Error: json.Unmarshal(c.Body(), &data)")
 		}
+
 		var val = utils.Values{}
 		val.New(arr)
-		val.ToMap()
 
-		return c.SendString("Get")
+		var data []models.Domain
+		err = app.DB.Preload(clause.Associations).Where("domain IN ?", val.GetKeyRows()).Find(&data).Error
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+
+		for _, item := range data {
+			domain, err := utils.StructToMap(item)
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+			for k := range val.Cols {
+				route := strings.Split(k, ".")
+
+				if len(route) == 1 {
+					val.Set(domain["Domain"].(string), k, domain[route[0]])
+				} else if domain[route[0]] != nil {
+					fmt.Println(domain[route[0]])
+					val.Set(domain["Domain"].(string), k, domain[route[0]].(map[string]any)[route[1]])
+					fmt.Println("OK")
+				}
+			}
+
+		}
+		j, err := json.MarshalIndent(val.Data, "", " ")
+		return c.Send(j)
 	})
 
 	site.Post("/", func(c fiber.Ctx) error {
@@ -50,8 +78,6 @@ func Sheets(f *fiber.App) {
 			}
 
 			utils.MapToTarget(val, &domain)
-			console(val)
-			console(domain)
 
 			err = app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&domain).Error
 			if err != nil {
@@ -65,7 +91,7 @@ func Sheets(f *fiber.App) {
 	})
 }
 
-func console(v any) {
+func console(v ...any) {
 	j, err := json.MarshalIndent(v, "", " ")
 	fmt.Println(string(j), err)
 }
