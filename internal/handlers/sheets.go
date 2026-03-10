@@ -16,6 +16,17 @@ import (
 func Sheets(f *fiber.App) {
 	site := f.Group("/sheets")
 
+	site.Get("/header", func(c fiber.Ctx) error {
+		var h = []string{"", "", "", "", "Ahrefs", "", "", "", "", "", "Semrush", "", "", "", "", "Majestic", "", ""}
+		var b = []string{"Domain", "Type", "Rel", "Comment", "DR", "Traffic", "Age", "Geo", "RefDomains", "OutDomains", "AS", "Traffic", "RefDomains", "OutDomains", "LinkFarm", "TF", "CF", "Topic"}
+		header := [][]string{h, b}
+		j, err := json.MarshalIndent(header, "", " ")
+		if err != nil {
+			return c.SendStatus(500)
+		}
+		return c.Send(j)
+	})
+
 	site.Get("/", func(c fiber.Ctx) error {
 		var arr [][]any
 		err := json.Unmarshal(c.Body(), &arr)

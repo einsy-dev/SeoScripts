@@ -6,11 +6,9 @@ import (
 
 type Majestic struct {
 	gorm.Model
-	DomainID   uint `gorm:"uniqueIndex;not null"`
-	SourceID   uint
-	TF         *uint
-	CF         *uint
-	Topic      *string
-	RefDomains *uint
-	OutDomains *uint
+	DomainID uint `gorm:"uniqueIndex;not null"`
+	SourceID uint
+	TF       *uint
+	CF       *uint
+	Topic    *string
 }
