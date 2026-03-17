@@ -6,7 +6,6 @@ import (
 	"domains/internal/utils"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -27,7 +26,8 @@ func Sheets(f *fiber.App) {
 		return c.Send(j)
 	})
 
-	site.Get("/", func(c fiber.Ctx) error {
+	site.Post("/get-data", func(c fiber.Ctx) error {
+		fmt.Println("Requst get start")
 		var arr [][]any
 		err := json.Unmarshal(c.Body(), &arr)
 		if err != nil {
@@ -36,7 +36,12 @@ func Sheets(f *fiber.App) {
 		}
 
 		var val = utils.Values{}
-		val.New(arr)
+		err = val.New(arr)
+
+		if err != nil {
+			fmt.Println(err)
+			return fiber.NewError(fiber.StatusBadRequest, "Can`t process array. Data is invalid")
+		}
 
 		var data []models.Domain
 		err = app.DB.Preload(clause.Associations).Where("domain IN ?", val.GetKeyRows()).Find(&data).Error
@@ -51,51 +56,44 @@ func Sheets(f *fiber.App) {
 				fmt.Println(err)
 				return nil
 			}
-			for k := range val.Cols {
-				route := strings.Split(k, ".")
-
-				if len(route) == 1 {
-					val.Set(domain["Domain"].(string), k, domain[route[0]])
-				} else if domain[route[0]] != nil {
-					val.Set(domain["Domain"].(string), k, domain[route[0]].(map[string]any)[route[1]])
-				}
-			}
-
+			val.SetMap(domain)
 		}
+		fmt.Println("Requst get end")
 		j, err := json.MarshalIndent(val.Data, "", " ")
 		return c.Send(j)
 	})
 
 	site.Post("/", func(c fiber.Ctx) error {
+		fmt.Println("Requst post start")
 		var arr [][]any
 		err := json.Unmarshal(c.Body(), &arr)
-		if err != nil {
+		if err != nil || len(arr) == 0 {
 			fmt.Println(err)
 			return c.SendString("Error: json.Unmarshal(c.Body(), &data)")
 		}
-		var val = utils.Values{}
+		var val = &utils.Values{}
 		val.New(arr)
-		var m = val.ToMap()
+		var domains = val.Rows
 
-		var data []models.Domain
-		for key, val := range m {
+		for d := range domains {
 			var domain models.Domain
-			err := app.DB.Preload(clause.Associations).Where(models.Domain{Domain: key}).FirstOrCreate(&domain).Error
+			err := app.DB.Preload(clause.Associations).Where(models.Domain{Domain: d}).FirstOrCreate(&domain).Error
 			if err != nil {
 				fmt.Println(err)
 				return nil
 			}
 
-			utils.MapToTarget(val, &domain)
-
+			m, err := utils.StructToMap(domain)
+			m = val.GetMap(m)
+			utils.MapToTarget(m, &domain)
 			err = app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&domain).Error
 			if err != nil {
 				fmt.Println(err)
 				return nil
 			}
-			data = append(data, domain)
 		}
-		j, err := json.MarshalIndent(data, "", " ")
+		fmt.Println("Requst post end")
+		j, err := json.MarshalIndent(val.Data, "", " ")
 		return c.Send(j)
 	})
 }
