@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	name    *string
-	token   *string
-	sources []Source
+	token *string `gorm:"uniqueIndex;not null"`
+	name  *string
+	role  string
 }

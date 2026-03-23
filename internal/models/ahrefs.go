@@ -7,7 +7,6 @@ import (
 type Ahrefs struct {
 	gorm.Model
 	DomainID   uint `gorm:"uniqueIndex;not null"`
-	SourceID   uint
 	DR         *uint
 	Traffic    *uint
 	Age        *uint

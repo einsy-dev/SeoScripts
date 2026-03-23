@@ -14,6 +14,6 @@ func Startup() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&Domain{}, &Ahrefs{}, &Semrush{}, &Majestic{}, &Source{}, &User{})
+	db.AutoMigrate(&Domain{}, &Ahrefs{}, &Semrush{}, &Majestic{}, &Group{}, &User{})
 	app.DB = db
 }

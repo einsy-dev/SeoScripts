@@ -11,4 +11,6 @@ type Domain struct {
 	Ahrefs   Ahrefs
 	Semrush  Semrush
 	Majestic Majestic
+	Group    Group
+	GroupID  *uint
 }

@@ -29,7 +29,7 @@ func (v *Values) GetKeyRows() []string {
 	return res
 }
 
-func (v *Values) Set(domain string, col string, val any) {
+func (v *Values) Set(domain string, col string, val any, clear bool) {
 	r := v.Rows[domain]
 	c := v.Cols[col]
 
@@ -40,7 +40,7 @@ func (v *Values) Set(domain string, col string, val any) {
 		for _, v2 := range c {
 			if val != nil {
 				v.Data[v1][v2] = val
-			} else {
+			} else if clear {
 				v.Data[v1][v2] = ""
 			}
 		}
@@ -64,26 +64,42 @@ func (v *Values) SetMap(m map[string]any) {
 	for k := range v.Cols {
 		keyM := strings.Split(k, ".")
 		var val any
+		var clear bool = false
+
 		if len(keyM) > 1 {
-			val = m[keyM[0]].(map[string]any)[keyM[1]]
+			if mp, ok := m[keyM[0]].(map[string]any); ok {
+				val = mp[keyM[1]]
+			} else {
+				val = ""
+			}
 		} else {
-			val = m[keyM[0]]
+			val, clear = m[keyM[0]]
 		}
 
-		v.Set(m["Domain"].(string), k, val)
+		v.Set(m["Domain"].(string), k, val, clear)
 	}
 }
 
-func (val *Values) GetMap(m map[string]any) map[string]any {
-	for k := range m {
-		if t, ok := m[k].(map[string]any); ok {
-			for k2 := range t {
-				t[k2] = formatValue(val.Get(m["Domain"].(string), strings.Join([]string{k, k2}, ".")))
-			}
-		} else {
-			m[k] = formatValue(val.Get(m["Domain"].(string), k))
+func (v *Values) GetMap(domain string) map[string]any {
+	m := make(map[string]any)
+	for k := range v.Cols {
+		kArr := strings.Split(k, ".")
+		val := v.Get(domain, k)
+
+		if len(kArr) == 1 {
+			m[kArr[0]] = val
+			continue
 		}
+
+		mp, ok := m[kArr[0]].(map[string]any)
+
+		if !ok {
+			mp = make(map[string]any)
+			m[kArr[0]] = mp
+		}
+		mp[kArr[1]] = val
 	}
+
 	return m
 }
 

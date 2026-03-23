@@ -3,6 +3,7 @@ package handlers
 import (
 	"domains/internal/app"
 	"domains/internal/models"
+	"domains/internal/services"
 	"domains/internal/utils"
 	"encoding/json"
 	"fmt"
@@ -27,7 +28,7 @@ func Sheets(f *fiber.App) {
 	})
 
 	site.Post("/get-data", func(c fiber.Ctx) error {
-		fmt.Println("Requst get start")
+
 		var arr [][]any
 		err := json.Unmarshal(c.Body(), &arr)
 		if err != nil {
@@ -58,13 +59,14 @@ func Sheets(f *fiber.App) {
 			}
 			val.SetMap(domain)
 		}
-		fmt.Println("Requst get end")
+
 		j, err := json.MarshalIndent(val.Data, "", " ")
 		return c.Send(j)
 	})
 
+	site.Use(services.Auth.Token())
 	site.Post("/", func(c fiber.Ctx) error {
-		fmt.Println("Requst post start")
+
 		var arr [][]any
 		err := json.Unmarshal(c.Body(), &arr)
 		if err != nil || len(arr) == 0 {
@@ -83,16 +85,16 @@ func Sheets(f *fiber.App) {
 				return nil
 			}
 
-			m, err := utils.StructToMap(domain)
-			m = val.GetMap(m)
-			utils.MapToTarget(m, &domain)
+			var dataMap = val.GetMap(d)
+			services.MapToDomain(dataMap, &domain)
+
 			err = app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&domain).Error
 			if err != nil {
 				fmt.Println(err)
 				return nil
 			}
 		}
-		fmt.Println("Requst post end")
+
 		j, err := json.MarshalIndent(val.Data, "", " ")
 		return c.Send(j)
 	})
