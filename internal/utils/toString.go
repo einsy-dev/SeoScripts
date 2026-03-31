@@ -2,11 +2,22 @@ package utils
 
 import "fmt"
 
-func ToString(v any) *string {
-	if m, ok := v.(string); ok {
-		return &m
+func ToString(v *any) *string {
+	if v == nil || *v == nil {
+		return nil
 	}
 
-	var res = fmt.Sprintf("%v", v)
-	return &res
+	var val = *v
+	if m, ok := val.(string); ok {
+		if m == "" {
+			return nil
+		}
+		return &m
+	} else {
+		res := fmt.Sprintf("%v", val)
+		if res == "<nil>" || res == "" {
+			return nil
+		}
+		return &res
+	}
 }

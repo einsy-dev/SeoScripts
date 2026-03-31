@@ -18,23 +18,23 @@ var reDig = regexp.MustCompile(`\d+(\.\d{0,2})?`)
 var reTrue = regexp.MustCompile(`(TRUE)|(true)`)
 var reFalse = regexp.MustCompile(`(FALSE)|(false)`)
 
-func ToUint(val any) *uint {
+func ToUint(val *any) *uint {
+	var nVal = *val
 
-	if m, ok := val.(uint); ok {
+	if m, ok := nVal.(uint); ok {
 		return &m
-	} else if m, ok := val.(int); ok {
+	} else if m, ok := nVal.(int); ok {
 		res := uint(m)
 		return &res
-	} else if m, ok := val.(float64); ok {
+	} else if m, ok := nVal.(float64); ok {
 		res := uint(math.Round(m))
 		return &res
 	}
 
-	v := []byte(strings.TrimSpace(fmt.Sprintf("%v", val)))
+	v := []byte(strings.TrimSpace(fmt.Sprintf("%v", nVal)))
 
 	if reInt.Match(v) {
 		var mult = 1
-
 		// replace letters with multiplier
 		if reTh.Match(v) {
 			mult *= 1e3
@@ -51,10 +51,6 @@ func ToUint(val any) *uint {
 		v = rePoint.ReplaceAll(v, []byte("."))
 		v = reDig.Find(v)
 
-		if string(v) == "" {
-			return nil
-		}
-
 		numI, err := strconv.ParseFloat(string(v), 64)
 
 		if err != nil {
@@ -62,7 +58,9 @@ func ToUint(val any) *uint {
 		}
 
 		res := uint(math.Round(numI * float64(mult)))
+
 		return &res
 	}
+
 	return nil
 }

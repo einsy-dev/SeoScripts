@@ -3,7 +3,8 @@ package models
 import "gorm.io/gorm"
 
 type Group struct {
-	gorm.Model
-	Name    string `gorm:"not null"`
-	Domains []Domain
+	gorm.Model `json:"-"`
+	ID         uint   `gorm:"primaryKey" json:"id"`
+	Name       string `gorm:"not null"`
+	Domains    []Domain
 }

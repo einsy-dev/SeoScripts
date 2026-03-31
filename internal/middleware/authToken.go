@@ -6,9 +6,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-type auth struct{}
-
-func (a *auth) Token() fiber.Handler {
+func AuthToken() fiber.Handler {
 	return func(c fiber.Ctx) error {
 		token := c.Get("Authorization")
 
@@ -27,5 +25,3 @@ func (a *auth) Token() fiber.Handler {
 		return c.Next()
 	}
 }
-
-var Auth = &auth{}

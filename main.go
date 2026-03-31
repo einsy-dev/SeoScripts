@@ -1,12 +1,11 @@
 package main
 
 import (
-	"domains/internal/handlers"
+	"domains/internal/api"
 	"domains/internal/models"
 	"log"
 	"os"
 
-	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
 )
 
@@ -27,9 +26,5 @@ func main() {
 	}
 
 	models.Startup()
-
-	f := fiber.New()
-	handlers.Sheets(f)
-
-	log.Fatal(f.Listen(":3000"))
+	api.Startup()
 }
