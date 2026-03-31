@@ -45,3 +45,29 @@ func Arr2dToMap(data [][]any) []map[string]any {
 	fmt.Println(res)
 	return res
 }
+
+func Get2dArrKeys(data [][]any) (map[string]int, map[string]int) {
+	var domains = make(map[string]int)
+	var columns = make(map[string]int)
+
+	var group string
+
+	for i, col := range data[1] {
+		if data[0][i] != "" {
+			group = data[0][i].(string)
+		}
+
+		if group != "" {
+			columns[group+"."+col.(string)] = i
+		} else {
+			columns[col.(string)] = i
+		}
+	}
+
+	for i, row := range data[2:] {
+		var domainCol = columns["Domain"]
+		domains[row[domainCol].(string)] = i + 2
+	}
+
+	return domains, columns
+}

@@ -9,7 +9,7 @@ import (
 type Domain struct {
 	gorm.Model `json:"-"`
 	ID         uint      `gorm:"primaryKey" json:"id"`
-	Domain     string    `gorm:"uniqueIndex;not null"`
+	Domain     string    `gorm:"uniqueIndex;not null" json:"domain"`
 	Type       *string   `json:"type,omitempty"`
 	Rel        *string   `json:"rel,omitempty"`
 	Comment    string    `json:"comment"`

@@ -4,10 +4,13 @@ import (
 	"domains/internal/api/sheets/table"
 	"domains/internal/app"
 	"domains/internal/models"
+	"domains/internal/utils"
 	"domains/pkg/csv"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"slices"
+	"strings"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -29,8 +32,50 @@ func Handler(f fiber.Router) {
 	})
 
 	sheets.Post("/get", func(c fiber.Ctx) error {
-		fmt.Println(c.Locals("data"))
-		return c.SendString("RRRR")
+		var data = c.Locals("data").([][]any)
+		arrRows, arrCols := csv.Get2dArrKeys(data)
+		var domains = slices.Collect(maps.Keys(arrRows))
+
+		var dbDomains []models.Domain
+
+		err := app.DB.Preload(clause.Associations).Where("domain in ?", domains).Find(&dbDomains).Error
+
+		if err != nil {
+			return fiber.NewError(fiber.StatusNotFound, err.Error())
+		}
+
+		for dName, rowIndex := range arrRows {
+			dIndex := slices.IndexFunc(dbDomains, func(el models.Domain) bool {
+				return el.Domain == dName
+			})
+			if dIndex == -1 {
+				continue
+			}
+
+			var dom = dbDomains[dIndex]
+			domain, err := utils.ToMap(dom)
+			if err != nil {
+				return fiber.NewError(fiber.StatusInternalServerError)
+			}
+
+			for c, colIndex := range arrCols {
+				addr := strings.Split(c, ".")
+				lvl1 := utils.ToCamelCase(addr[0])
+
+				if len(addr) == 1 {
+					if v, ok := domain[lvl1]; ok && v != "" {
+						data[rowIndex][colIndex] = v
+					}
+				} else if m, ok := domain[lvl1].(map[string]any); ok {
+					lvl2 := utils.ToCamelCase(addr[1])
+					if v, ok := m[lvl2]; ok && v != "" {
+						data[rowIndex][colIndex] = v
+					}
+				}
+			}
+		}
+
+		return c.Status(fiber.StatusOK).JSON(data)
 	})
 
 	sheets.Post("/update", func(c fiber.Ctx) error {
@@ -46,8 +91,6 @@ func Handler(f fiber.Router) {
 			})
 
 			if dIndex == -1 {
-				fmt.Println("-1")
-
 				err := app.DB.Create(&models.Domain{Domain: v}).Error
 				if err != nil {
 					fmt.Println(err)
@@ -63,11 +106,6 @@ func Handler(f fiber.Router) {
 				dIndex = slices.IndexFunc(dbDomains, func(el models.Domain) bool {
 					return el.Domain == v
 				})
-
-				if dIndex == -1 {
-					fmt.Println("dIndex: -1")
-					continue
-				}
 			}
 
 			models.MapToDomain(arrMap[i], &dbDomains[dIndex])

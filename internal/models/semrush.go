@@ -10,9 +10,9 @@ type Semrush struct {
 	gorm.Model `json:"-"`
 	ID         uint    `gorm:"primaryKey" json:"id"`
 	DomainID   uint    `gorm:"uniqueIndex;not null" json:"-"`
-	AS         *uint   `json:"AS,omitempty"`
+	AS         *uint   `json:"as,omitempty"`
 	Traffic    *uint   `json:"traffic,omitempty"`
-	RefDomains *uint   `json:"refDomians,omitempty"`
+	RefDomains *uint   `json:"refDomains,omitempty"`
 	OutDomains *uint   `json:"outDomains,omitempty"`
 	LinkFarm   *string `json:"linkFarm,omitempty"`
 }

@@ -12,9 +12,9 @@ type Ahrefs struct {
 	DomainID   uint    `gorm:"uniqueIndex;not null" json:"-"`
 	DR         *uint   `json:"dr,omitempty"`
 	Traffic    *uint   `json:"traffic,omitempty"`
-	Age        *uint   `json:"Age,omitempty"`
+	Age        *uint   `json:"age,omitempty"`
 	Geo        *string `json:"geo,omitempty"`
-	RefDomains *uint   `json:"refDomians,omitempty"`
+	RefDomains *uint   `json:"refDomains,omitempty"`
 	OutDomains *uint   `json:"outDomains,omitempty"`
 }
 

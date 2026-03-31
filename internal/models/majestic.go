@@ -10,8 +10,8 @@ type Majestic struct {
 	gorm.Model `json:"-"`
 	ID         uint    `gorm:"primaryKey" json:"id"`
 	DomainID   uint    `gorm:"uniqueIndex;not null" json:"-"`
-	TF         *uint   `json:"TF,omitempty"`
-	CF         *uint   `json:"CF,omitempty"`
+	TF         *uint   `json:"tf,omitempty"`
+	CF         *uint   `json:"cf,omitempty"`
 	Topic      *string `json:"topic,omitempty"`
 }
 
