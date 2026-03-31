@@ -3,6 +3,7 @@ package sheets
 import (
 	"domains/internal/api/sheets/table"
 	"domains/internal/app"
+	"domains/internal/middleware"
 	"domains/internal/models"
 	"domains/internal/utils"
 	"domains/pkg/csv"
@@ -78,6 +79,7 @@ func Handler(f fiber.Router) {
 		return c.Status(fiber.StatusOK).JSON(data)
 	})
 
+	sheets.Use(middleware.AuthToken())
 	sheets.Post("/update", func(c fiber.Ctx) error {
 		var arrMap = csv.Arr2dToMap(c.Locals("data").([][]any))
 		var domains = getDomains(arrMap)
