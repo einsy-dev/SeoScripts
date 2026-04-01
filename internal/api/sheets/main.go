@@ -8,7 +8,7 @@ import (
 	"domains/internal/utils"
 	"domains/pkg/csv"
 	"encoding/json"
-	"fmt"
+	"log"
 	"maps"
 	"slices"
 	"strings"
@@ -95,12 +95,14 @@ func Handler(f fiber.Router) {
 			if dIndex == -1 {
 				err := app.DB.Create(&models.Domain{Domain: v}).Error
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
+					continue
 				}
 				var d models.Domain
 				err = app.DB.Preload(clause.Associations).Where("domain = ?", v).First(&d).Error
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
+					continue
 				}
 
 				dbDomains = append(dbDomains, d)

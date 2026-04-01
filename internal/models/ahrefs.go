@@ -25,7 +25,7 @@ func MapToAhrefs(m map[string]any, target *Ahrefs) {
 		target.DR = u.ToUint(&drVal)
 	}
 
-	ageVal := m["DR"]
+	ageVal := m["Age"]
 	ageValF := u.ToUint(&ageVal)
 	if ageValF != nil {
 		target.Age = ageValF

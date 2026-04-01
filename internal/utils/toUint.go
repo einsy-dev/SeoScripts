@@ -54,7 +54,7 @@ func ToUint(val *any) *uint {
 		numI, err := strconv.ParseFloat(string(v), 64)
 
 		if err != nil {
-			log.Fatalf("Error converting string to int: %v", err)
+			log.Printf("Error converting string to int: %v", err)
 		}
 
 		res := uint(math.Round(numI * float64(mult)))

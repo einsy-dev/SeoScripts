@@ -1,7 +1,6 @@
 package csv
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -42,7 +41,6 @@ func Arr2dToMap(data [][]any) []map[string]any {
 		}
 		res = append(res, val)
 	}
-	fmt.Println(res)
 	return res
 }
 
