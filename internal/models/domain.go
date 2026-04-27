@@ -8,16 +8,19 @@ import (
 
 type Domain struct {
 	gorm.Model `json:"-"`
-	ID         uint      `gorm:"primaryKey" json:"id"`
-	Domain     string    `gorm:"uniqueIndex;not null" json:"domain"`
-	Type       *string   `json:"type,omitempty"`
-	Rel        *string   `json:"rel,omitempty"`
-	Comment    string    `json:"comment"`
-	Ahrefs     *Ahrefs   `json:"ahrefs,omitempty"`
-	Semrush    *Semrush  `json:"semrush,omitempty"`
-	Majestic   *Majestic `json:"majestic,omitempty"`
-	Group      *Group    `json:"group,omitempty"`
-	GroupID    *uint     `json:"-"`
+	ID         uint       `gorm:"primaryKey" json:"id"`
+	Domain     string     `gorm:"uniqueIndex;not null" json:"domain"`
+	Type       *string    `json:"type,omitempty"`
+	Rel        *string    `json:"rel,omitempty"`
+	Comment    string     `json:"comment"`
+	Ahrefs     *Ahrefs    `json:"ahrefs,omitempty"`
+	Semrush    *Semrush   `json:"semrush,omitempty"`
+	Majestic   *Majestic  `json:"majestic,omitempty"`
+	Moz        *Moz       `json:"moz,omitempty"`
+	Accounts   *[]Account `json:"accounts,omitempty"`
+	Links      *[]Link    `json:"links,omitempty"`
+	Group      *Group     `json:"group,omitempty"`
+	GroupID    *uint      `json:"-"`
 }
 
 func MapToDomain(m map[string]any, target *Domain) {
@@ -56,5 +59,11 @@ func MapToDomain(m map[string]any, target *Domain) {
 			target.Majestic = &Majestic{}
 		}
 		MapToMajestic(maj, target.Majestic)
+	}
+	if moz, ok := m["Moz"].(map[string]any); ok {
+		if target.Moz == nil {
+			target.Moz = &Moz{}
+		}
+		MapToMoz(moz, target.Moz)
 	}
 }

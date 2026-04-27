@@ -8,5 +8,31 @@
     ],
     "description": "",
     "scope": "go"
+  },
+  "api": {
+    "prefix": [
+      "api"
+    ],
+    "body": [
+      "package account\r",
+      "\r",
+      "import \"github.com/gofiber/fiber/v3\"\r",
+      "\r",
+      "func Handler(f fiber.Router) {\r",
+      "\tgroup := f.Group(\"/group\")\r",
+      "\r",
+      "\tgroup.Get(\"/:group\", func(c fiber.Ctx) error {\r",
+      "\t\tvar param = c.Params(\"group\")\r",
+      "\t\treturn c.Status(fiber.StatusOK).JSON(nil)\r",
+      "\t})\r",
+      "\r",
+      "\tgroup.Post(\"/:group\", func(c fiber.Ctx) error {\r",
+      "\t\tvar param = c.Params(\"group\")\r",
+      "\t\treturn c.Status(fiber.StatusOK).JSON(nil)\r",
+      "\t})\r",
+      "}"
+    ],
+    "description": "",
+    "scope": "go"
   }
 }
