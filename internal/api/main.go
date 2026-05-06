@@ -2,10 +2,10 @@ package api
 
 import (
 	"domains/internal/api/account"
-	"domains/internal/api/csv"
 	"domains/internal/api/domain"
 	"domains/internal/api/link"
 	"domains/internal/api/sheets"
+	"domains/internal/api/utils"
 	"domains/internal/middleware"
 	"log"
 
@@ -20,10 +20,10 @@ func Startup() {
 
 	f.Use(middleware.AuthToken())
 
-	csv.Handler(api)
 	domain.Handler(api)
 	link.Handler(api)
 	account.Handler(api)
+	utils.Handler(api)
 
 	log.Fatal(f.Listen(":3000"))
 }

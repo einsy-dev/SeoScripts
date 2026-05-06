@@ -67,3 +67,14 @@ func MapToDomain(m map[string]any, target *Domain) {
 		MapToMoz(moz, target.Moz)
 	}
 }
+
+func DomainToMap(domain *Domain) map[string]any {
+	return nil
+}
+
+func DomainToCsv(d *Domain) [][]any {
+	return [][]any{
+		{"Domain", "Type", "Rel", "Comment", "Ahrefs.DR"},
+		{d.Domain, *d.Type, *d.Rel, d.Comment, *d.Ahrefs.DR},
+	}
+}

@@ -34,5 +34,17 @@
     ],
     "description": "",
     "scope": "go"
+  },
+  "Ptr": {
+    "prefix": [
+      "ptr"
+    ],
+    "body": [
+      "func P[T any](v T) *T {\r",
+      "\treturn &v\r",
+      "}"
+    ],
+    "description": "",
+    "scope": "go"
   }
 }
