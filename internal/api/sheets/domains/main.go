@@ -4,6 +4,7 @@ import (
 	"domains/internal/middleware"
 	"domains/internal/utils"
 	"domains/pkg/csvParser"
+	"domains/pkg/linkParser"
 	"slices"
 
 	"github.com/gofiber/fiber/v3"
@@ -30,6 +31,10 @@ func Handler(f fiber.Router) {
 		}
 
 		csv, err := csvParser.Parse(slices.Concat(body.Header, body.Data), csvParser.Options{})
+		csv.FormatRows(func(row string) string {
+			return linkParser.Domain(row)
+		})
+
 		c.Locals("csv", csv)
 		return c.Next()
 	})
@@ -48,8 +53,8 @@ func Handler(f fiber.Router) {
 		csv := c.Locals("csv").(*csvParser.CsvItem)
 		err := handleCreate(csv)
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).SendString("Err handleGet")
+			return c.Status(fiber.StatusBadRequest).SendString("Err handlepost")
 		}
-		return c.Status(fiber.StatusAccepted).JSON(csv.Value)
+		return c.Redirect().Status(fiber.StatusTemporaryRedirect).To("get")
 	})
 }

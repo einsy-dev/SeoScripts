@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"domains/internal/utils"
 	"domains/pkg/linkParser"
 
 	"github.com/gofiber/fiber/v3"
@@ -9,7 +10,7 @@ import (
 func Handler(app fiber.Router) {
 	var domain = app.Group("/domain")
 
-	domain.Post("/format/:type", func(c fiber.Ctx) error {
+	domain.Post("/:type", func(c fiber.Ctx) error {
 		var param = c.Params("type")
 		var body []string
 		err := c.Bind().Body(&body)
@@ -20,19 +21,19 @@ func Handler(app fiber.Router) {
 
 		switch param {
 		case "root":
-			forEach(body, func(el string) string {
+			utils.ForEach(body, func(el string) string {
 				return linkParser.RootDomain(el)
 			})
 		case "domain":
-			forEach(body, func(el string) string {
+			utils.ForEach(body, func(el string) string {
 				return linkParser.Domain(el)
 			})
 		case "pathname":
-			forEach(body, func(el string) string {
+			utils.ForEach(body, func(el string) string {
 				return linkParser.PathName(el)
 			})
 		case "params":
-			forEach(body, func(el string) string {
+			utils.ForEach(body, func(el string) string {
 				return linkParser.Params(el)
 			})
 		}
@@ -40,10 +41,4 @@ func Handler(app fiber.Router) {
 		return c.Status(fiber.StatusAccepted).JSON(body)
 	})
 
-}
-
-func forEach(s []string, fn func(el string) string) {
-	for i, v := range s {
-		s[i] = fn(v)
-	}
 }

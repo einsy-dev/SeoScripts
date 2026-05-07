@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model `json:"-"`
-	Token      *string `gorm:"uniqueIndex;not null" json:"token"`
+	Token      *string `json:"token" gorm:"uniqueIndex;not null"`
 	Name       *string `json:"name"`
-	Role       string  `gorm:"default:USER"`
+	Role       string  `json:"rolw" gorm:"default:USER"`
 	Status     *string `json:"status"`
 }

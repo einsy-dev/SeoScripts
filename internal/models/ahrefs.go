@@ -2,6 +2,7 @@ package models
 
 import (
 	u "domains/internal/utils"
+	"regexp"
 
 	"gorm.io/gorm"
 )
@@ -52,6 +53,16 @@ func MapToAhrefs(m map[string]any, target *Ahrefs) {
 	geoVal := m["Geo"]
 	geoValF := u.ToString(&geoVal)
 	if geoValF != nil {
-		target.Geo = geoValF
+		target.Geo = formatGeo(geoValF)
 	}
+}
+
+var rGeo = regexp.MustCompile(`[a-zA-Z]+`)
+
+func formatGeo(geo *string) *string {
+	var res = rGeo.FindString(*geo)
+	if res == "" {
+		return nil
+	}
+	return &res
 }

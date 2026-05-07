@@ -1,9 +1,10 @@
 package sheets
 
 import (
+	"domains/internal/api/sheets/accounts"
 	"domains/internal/api/sheets/domains"
+	"domains/internal/api/sheets/groups"
 	"domains/internal/api/sheets/links"
-	"domains/internal/api/sheets/table"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -11,7 +12,8 @@ import (
 func Handler(f fiber.Router) {
 	sheets := f.Group("/sheets")
 
-	table.Handlrer(sheets)
 	domains.Handler(sheets)
 	links.Handler(sheets)
+	accounts.Handler(sheets)
+	groups.Handler(sheets)
 }

@@ -42,14 +42,18 @@ func (i *CsvItem) ToMap() ([]map[string]any, error) {
 
 func (i *CsvItem) FormatCols(fn func(col string) string) {
 	for c, v := range i.Cols {
+		delete(i.Cols, c)
 		c = fn(c)
+		i.Cols[c] = v
 		i.Value[0][v] = c
 	}
 }
 
 func (i *CsvItem) FormatRows(fn func(row string) string) {
 	for r, v := range i.Rows {
+		delete(i.Rows, r)
 		r = fn(r)
+		i.Rows[r] = v
 		i.Value[v][i.KeyIndex] = r
 	}
 }

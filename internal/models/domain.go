@@ -74,7 +74,52 @@ func DomainToMap(domain *Domain) map[string]any {
 
 func DomainToCsv(d *Domain) [][]any {
 	return [][]any{
-		{"Domain", "Type", "Rel", "Comment", "Ahrefs.DR"},
-		{d.Domain, *d.Type, *d.Rel, d.Comment, *d.Ahrefs.DR},
+		{
+			"Domain",
+			"Type",
+			"Rel",
+			"Comment",
+			"Ahrefs.DR",
+			"Ahrefs.Traffic",
+			"Ahrefs.Age",
+			"Ahrefs.Geo",
+			"Ahrefs.RefDomains",
+			"Ahrefs.OutDomains",
+			"Semrush.AS",
+			"Semrush.Traffic",
+			"Semrush.RefDomains",
+			"Semrush.OutDomains",
+			"Semrush.LinkFarm",
+			"Majestic.TF",
+			"Majestic.CF",
+			"Majestic.Topic",
+		},
+		{
+			d.Domain,
+			checkNil(d.Type),
+			checkNil(d.Rel),
+			d.Comment,
+			checkNil(d.Ahrefs.DR),
+			checkNil(d.Ahrefs.Traffic),
+			checkNil(d.Ahrefs.Age),
+			checkNil(d.Ahrefs.Geo),
+			checkNil(d.Ahrefs.RefDomains),
+			checkNil(d.Ahrefs.OutDomains),
+			checkNil(d.Semrush.AS),
+			checkNil(d.Semrush.Traffic),
+			checkNil(d.Semrush.RefDomains),
+			checkNil(d.Semrush.OutDomains),
+			checkNil(d.Semrush.LinkFarm),
+			checkNil(d.Majestic.TF),
+			checkNil(d.Majestic.CF),
+			checkNil(d.Majestic.Topic),
+		},
 	}
+}
+
+func checkNil(P any) any {
+	if P == nil {
+		return ""
+	}
+	return P
 }

@@ -1,11 +1,11 @@
 package csv
 
 import (
+	"domains/internal/utils"
 	"domains/pkg/csvParser"
 	"domains/pkg/csvParser/services"
 	"domains/pkg/linkParser"
 	"encoding/json"
-	"errors"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
@@ -30,7 +30,7 @@ func Handler(app fiber.Router) {
 				return c.Status(fiber.StatusBadRequest).SendString("err read csv")
 			}
 		} else if m, ok := body.([]any); ok {
-			nr, _ := Assert[[][][]string](res)
+			nr, _ := utils.Assert[[][][]string](res)
 			for _, v := range m {
 				csv, err := services.CsvRead(v.(string))
 				if err != nil {
@@ -153,16 +153,4 @@ func Handler(app fiber.Router) {
 
 		return c.Status(fiber.StatusOK).JSON(res.Value)
 	})
-}
-
-func P[T any](v T) *T {
-	return &v
-}
-
-func Assert[T any](v any) (T, error) {
-	if m, ok := v.(T); ok {
-		return m, nil
-	}
-	var zero T
-	return zero, errors.New("Type assertion failed")
 }

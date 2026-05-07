@@ -37,7 +37,7 @@ func handleGet(csv *csvParser.CsvItem) error {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		csv.Join(csvP)
+		csv.Update(csvP)
 	}
 	return nil
 }
