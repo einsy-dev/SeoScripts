@@ -27,10 +27,18 @@ func (i *CsvItem) Join(csv ...*CsvItem) error {
 
 func (i *CsvItem) Update(csv ...*CsvItem) error {
 	if len(csv) < 1 {
-		return errors.New("Not enough arguments in 'Join' func")
+		return errors.New("Not enough arguments in 'Update' func")
 	}
 	items := append([]*CsvItem{i}, csv...)
 	return Update(items...)
+}
+
+func (i *CsvItem) UpdateMap(m ...map[string]any) error {
+	if len(m) < 1 {
+		return errors.New("Not enough arguments in 'UpdateMap' func")
+	}
+	items := append([]map[string]any{}, m...)
+	return UpdateMap(i, "Domain", items...)
 }
 
 func (i *CsvItem) ToMap() ([]map[string]any, error) {

@@ -18,3 +18,11 @@ type Link struct {
 	ReviewedAt *time.Time    `json:"reviewedAt"`
 	Status     *enums.Status `gorm:"type:status;default:'pending'" json:"status"`
 }
+
+func (l *Link) ToMap() map[string]any {
+	var res = make(map[string]any)
+	return res
+}
+func (l *Link) ToStruct(m map[string]any) {
+
+}

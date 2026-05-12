@@ -1,0 +1,19 @@
+{{define "client-clock"}}
+<script>
+  class ClientClock extends HTMLElement {
+    connectedCallback() {
+      this.tick();
+      this.interval = setInterval(() => this.tick(), 1000);
+    }
+    disconnectedCallback() {
+      clearInterval(this.interval);
+    }
+    tick() {
+      this.innerHTML = new Date().toLocaleTimeString();
+    }
+  }
+  customElements.define("client-clock", ClientClock);
+</script>
+
+<client-clock></client-clock>
+{{end}}

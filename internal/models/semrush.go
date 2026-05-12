@@ -1,7 +1,7 @@
 package models
 
 import (
-	u "domains/internal/utils"
+	"domains/internal/models/format"
 
 	"gorm.io/gorm"
 )
@@ -17,34 +17,22 @@ type Semrush struct {
 	LinkFarm   *string `json:"linkFarm,omitempty"`
 }
 
-func MapToSemrush(m map[string]any, target *Semrush) {
-	asVal := m["AS"]
-	asValF := u.ToUint(&asVal)
-	if asValF != nil {
-		target.AS = asValF
-	}
+func (s *Semrush) ToStruct(m map[string]any) {
+	format.Format(s.AS, m["AS"])
+	format.Format(s.Traffic, m["Traffic"])
+	format.Format(s.RefDomains, m["RefDomains"])
+	format.Format(s.OutDomains, m["OutDomains"])
+	format.Format(s.LinkFarm, m["LinkFarm"])
+}
 
-	trafficVal := m["Traffic"]
-	trafficValF := u.ToUint(&trafficVal)
-	if trafficValF != nil {
-		target.Traffic = trafficValF
-	}
+func (s *Semrush) ToMap() map[string]any {
+	var res = make(map[string]any)
 
-	refDVal := m["RefDomains"]
-	refDValF := u.ToUint(&refDVal)
-	if refDValF != nil {
-		target.RefDomains = refDValF
-	}
+	res["AS"] = s.AS
+	res["Traffic"] = s.Traffic
+	res["RefDomains"] = s.RefDomains
+	res["OutDomains"] = s.OutDomains
+	res["LinkFarm"] = s.LinkFarm
 
-	outDVal := m["OutDomains"]
-	outDValF := u.ToUint(&outDVal)
-	if outDValF != nil {
-		target.OutDomains = outDValF
-	}
-
-	linkFarmVal := m["LinkFarm"]
-	linkFarmValF := u.ToString(&linkFarmVal)
-	if linkFarmValF != nil {
-		target.LinkFarm = linkFarmValF
-	}
+	return res
 }

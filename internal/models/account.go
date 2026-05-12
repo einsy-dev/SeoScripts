@@ -7,3 +7,11 @@ type Account struct {
 	Password *string `json:"password"`
 	Username *string `json:"username"`
 }
+
+func (a *Account) ToMap() map[string]any {
+	var res = make(map[string]any)
+	return res
+}
+func (a *Account) ToStruct(m map[string]any) {
+
+}

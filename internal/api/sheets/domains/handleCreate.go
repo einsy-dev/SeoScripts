@@ -57,7 +57,7 @@ func handleCreate(csv *csvParser.CsvItem) error {
 			continue
 		}
 
-		models.MapToDomain(csvMap[csv.Rows[csvDom]-1], &dbDoms[dIndex])
+		dbDoms[dIndex].ToStruct(csvMap[csv.Rows[csvDom]-1])
 
 		err := app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&dbDoms[dIndex]).Error // optimize for batch upsert
 

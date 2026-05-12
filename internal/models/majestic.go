@@ -1,7 +1,7 @@
 package models
 
 import (
-	u "domains/internal/utils"
+	"domains/internal/models/format"
 
 	"gorm.io/gorm"
 )
@@ -15,22 +15,17 @@ type Majestic struct {
 	Topic      *string `json:"topic,omitempty"`
 }
 
-func MapToMajestic(m map[string]any, target *Majestic) {
-	tfVal := m["TF"]
-	tfValF := u.ToUint(&tfVal)
-	if tfValF != nil {
-		target.TF = tfValF
-	}
+func (maj *Majestic) ToMap() map[string]any {
+	var res = make(map[string]any)
 
-	cfVal := m["CF"]
-	cfValF := u.ToUint(&cfVal)
-	if cfValF != nil {
-		target.CF = cfValF
-	}
+	res["TF"] = maj.TF
+	res["CF"] = maj.CF
+	res["Topic"] = maj.Topic
 
-	topicVal := m["Topic"]
-	topicValF := u.ToString(&topicVal)
-	if topicValF != nil {
-		target.Topic = topicValF
-	}
+	return res
+}
+func (maj *Majestic) ToStruct(m map[string]any) {
+	format.Format(maj.TF, m["TF"])
+	format.Format(maj.CF, m["CF"])
+	format.Format(maj.Topic, m["Topic"])
 }

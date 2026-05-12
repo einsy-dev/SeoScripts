@@ -2,6 +2,7 @@ package domain
 
 import (
 	"domains/internal/app"
+	"domains/internal/middleware"
 	"domains/internal/models"
 
 	"github.com/gofiber/fiber/v3"
@@ -11,6 +12,8 @@ import (
 
 func Handler(f fiber.Router) {
 	domain := f.Group("/domain")
+
+	domain.Use(middleware.AuthToken())
 
 	domain.Get("/:domain", func(c fiber.Ctx) error {
 		var param = c.Params("domain")

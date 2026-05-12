@@ -46,5 +46,33 @@
     ],
     "description": "",
     "scope": "go"
+  },
+  "flatMap": {
+    "prefix": [
+      "flatMap"
+    ],
+    "body": [
+      "func flatMap(key string, m map[string]any, acc map[string]any) map[string]any {\r",
+      "\tif acc == nil {\r",
+      "\t\tacc = make(map[string]any)\r",
+      "\t}\r",
+      "\r",
+      "\tfor k, v := range m {\r",
+      "\t\tnk := k\r",
+      "\t\tif key != \"\" {\r",
+      "\t\t\tnk = strings.Join([]string{key, k}, \".\")\r",
+      "\t\t}\r",
+      "\r",
+      "\t\tif m, ok := v.(map[string]any); ok {\r",
+      "\t\t\tflatMap(nk, m, acc)\r",
+      "\t\t} else {\r",
+      "\t\t\tacc[nk] = v\r",
+      "\t\t}\r",
+      "\t}\r",
+      "\treturn acc\r",
+      "}"
+    ],
+    "description": "",
+    "scope": "go"
   }
 }

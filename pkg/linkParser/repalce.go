@@ -2,6 +2,7 @@ package linkParser
 
 //websites that use subdomains for users / sites
 var replace = []string{
+	"stck.me",
 	"webador.com",
 	"fc2.com",
 	"company.site",

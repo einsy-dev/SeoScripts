@@ -9,3 +9,9 @@ type User struct {
 	Role       string  `json:"rolw" gorm:"default:USER"`
 	Status     *string `json:"status"`
 }
+
+func (u *User) ToMap() map[string]any {
+	var res = make(map[string]any)
+	return res
+}
+func (u *User) ToStruct(m map[string]any) {}

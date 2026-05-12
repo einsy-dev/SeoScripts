@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"domains/internal/middleware"
 	"domains/internal/utils"
 	"domains/pkg/linkParser"
 
@@ -10,15 +11,16 @@ import (
 func Handler(app fiber.Router) {
 	var domain = app.Group("/domain")
 
+	domain.Use(middleware.JsonBody())
 	domain.Post("/:type", func(c fiber.Ctx) error {
 		var param = c.Params("type")
+
 		var body []string
 		err := c.Bind().Body(&body)
 
 		if err != nil {
 			c.Status(fiber.StatusBadRequest).SendString("Invalid body must be [] of strings")
 		}
-
 		switch param {
 		case "root":
 			utils.ForEach(body, func(el string) string {

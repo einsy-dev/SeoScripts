@@ -6,24 +6,17 @@ import (
 	"domains/internal/api/link"
 	"domains/internal/api/sheets"
 	"domains/internal/api/utils"
-	"domains/internal/middleware"
-	"log"
 
 	"github.com/gofiber/fiber/v3"
 )
 
-func Startup() {
-	f := fiber.New()
+func Startup(f *fiber.App) {
 	var api = f.Group("/api")
 
+	utils.Handler(api)
 	sheets.Handler(api)
-
-	f.Use(middleware.AuthToken())
 
 	domain.Handler(api)
 	link.Handler(api)
 	account.Handler(api)
-	utils.Handler(api)
-
-	log.Fatal(f.Listen(":3000"))
 }

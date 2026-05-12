@@ -1,7 +1,7 @@
 package models
 
 import (
-	u "domains/internal/utils"
+	"domains/internal/models/format"
 
 	"gorm.io/gorm"
 )
@@ -15,22 +15,22 @@ type Moz struct {
 	SpamScore *uint `json:"spamScore,omitempty"`
 }
 
-func MapToMoz(m map[string]any, target *Moz) {
-	daVal := m["DA"]
-	daValF := u.ToUint(&daVal)
-	if daValF != nil {
-		target.DA = daValF
+func (moz *Moz) ToMap() map[string]any {
+	var res = make(map[string]any)
+
+	if moz != nil {
+		res["DA"] = moz.DA
+		res["PA"] = moz.PA
+		res["SpamScore"] = moz.SpamScore
+	} else {
+		return nil
 	}
 
-	paVal := m["PA"]
-	paValF := u.ToUint(&paVal)
-	if paValF != nil {
-		target.PA = paValF
-	}
+	return res
+}
 
-	spamVal := m["SpamScore"]
-	spamValF := u.ToUint(&spamVal)
-	if spamValF != nil {
-		target.SpamScore = spamValF
-	}
+func (moz *Moz) ToStruct(m map[string]any) {
+	format.Format(moz.DA, m["DA"])
+	format.Format(moz.PA, m["PA"])
+	format.Format(moz.SpamScore, m["SpamScore"])
 }

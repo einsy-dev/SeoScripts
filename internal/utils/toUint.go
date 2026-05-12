@@ -18,8 +18,8 @@ var reDig = regexp.MustCompile(`\d+(\.\d{0,2})?`)
 var reTrue = regexp.MustCompile(`(TRUE)|(true)`)
 var reFalse = regexp.MustCompile(`(FALSE)|(false)`)
 
-func ToUint(val *any) *uint {
-	var nVal = *val
+func ToUint(val any) *uint {
+	var nVal = val
 
 	if m, ok := nVal.(uint); ok {
 		return &m

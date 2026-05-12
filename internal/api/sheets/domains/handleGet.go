@@ -4,8 +4,6 @@ import (
 	"domains/internal/app"
 	"domains/internal/models"
 	"domains/pkg/csvParser"
-	"domains/pkg/csvParser/services"
-	"fmt"
 	"maps"
 	"slices"
 
@@ -32,12 +30,10 @@ func handleGet(csv *csvParser.CsvItem) error {
 			continue
 		}
 
-		var dom = models.DomainToCsv(&dbDoms[dIndex])
-		var csvP, err = csvParser.Parse(dom, services.Options{Keys: &[]string{"Domain"}})
-		if err != nil {
-			fmt.Println(err.Error())
-		}
-		csv.Update(csvP)
+		var dom = dbDoms[dIndex].ToMap()
+
+		// Usage:
+		csv.UpdateMap(dom)
 	}
 	return nil
 }

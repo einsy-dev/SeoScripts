@@ -1,8 +1,7 @@
 package models
 
 import (
-	u "domains/internal/utils"
-	"regexp"
+	f "domains/internal/models/format"
 
 	"gorm.io/gorm"
 )
@@ -19,50 +18,24 @@ type Ahrefs struct {
 	OutDomains *uint   `json:"outDomains,omitempty"`
 }
 
-func MapToAhrefs(m map[string]any, target *Ahrefs) {
-	drVal := m["DR"]
-	drValF := u.ToUint(&drVal)
-	if drValF != nil {
-		target.DR = u.ToUint(&drVal)
-	}
-
-	ageVal := m["Age"]
-	ageValF := u.ToUint(&ageVal)
-	if ageValF != nil {
-		target.Age = ageValF
-	}
-
-	trafficVal := m["Traffic"]
-	trafficValF := u.ToUint(&trafficVal)
-	if trafficValF != nil {
-		target.Traffic = trafficValF
-	}
-
-	refDVal := m["RefDomains"]
-	refDValF := u.ToUint(&refDVal)
-	if refDValF != nil {
-		target.RefDomains = refDValF
-	}
-
-	outDVal := m["OutDomains"]
-	outDValF := u.ToUint(&outDVal)
-	if outDValF != nil {
-		target.OutDomains = outDValF
-	}
-
-	geoVal := m["Geo"]
-	geoValF := u.ToString(&geoVal)
-	if geoValF != nil {
-		target.Geo = formatGeo(geoValF)
-	}
+func (a *Ahrefs) ToStruct(m map[string]any) {
+	f.Format(a.DR, m["DR"])
+	f.Format(a.Traffic, m["Traffic"])
+	f.Format(a.Age, m["Age"])
+	f.Format(a.Geo, f.FormatGeo(m["Geo"])) // formats geo
+	f.Format(a.RefDomains, m["RefDomains"])
+	f.Format(a.OutDomains, m["OutDomains"])
 }
 
-var rGeo = regexp.MustCompile(`[a-zA-Z]+`)
+func (a *Ahrefs) ToMap() map[string]any {
+	var res = make(map[string]any)
 
-func formatGeo(geo *string) *string {
-	var res = rGeo.FindString(*geo)
-	if res == "" {
-		return nil
-	}
-	return &res
+	res["DR"] = a.DR
+	res["Traffic"] = a.Traffic
+	res["Age"] = a.Age
+	res["Geo"] = a.Geo
+	res["RefDomains"] = a.RefDomains
+	res["OutDomains"] = a.OutDomains
+
+	return res
 }
