@@ -1,23 +1,36 @@
 package utils
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
 
 func ToString(v any) *string {
 	if v == nil {
 		return nil
 	}
 
-	var val = v
-	if m, ok := val.(string); ok {
-		if m == "" {
-			return nil
-		}
-		return &m
-	} else {
-		res := fmt.Sprintf("%v", val)
-		if res == "<nil>" || res == "" {
-			return nil
-		}
-		return &res
+	var res string
+
+	switch t := v.(type) {
+	case string:
+		res = t
+	case json.Number:
+		res = t.String()
+	case float64:
+		res = strconv.FormatFloat(t, 'f', -1, 64)
+	case bool:
+		res = strconv.FormatBool(t)
+	case int, int64:
+		res = fmt.Sprintf("%d", t)
+	default:
+		res = fmt.Sprintf("%v", v)
 	}
+
+	if res == "" || res == "<nil>" {
+		return nil
+	}
+
+	return &res
 }

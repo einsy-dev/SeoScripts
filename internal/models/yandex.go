@@ -26,5 +26,5 @@ func (y *Yandex) ToMap() map[string]any {
 }
 
 func (y *Yandex) ToStruct(m map[string]any) {
-	format.Format(y.X, m["X"])
+	format.Format(&y.X, m["X"])
 }

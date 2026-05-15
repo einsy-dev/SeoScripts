@@ -18,7 +18,7 @@ func handleCreate(csv *csvParser.CsvItem) error {
 	var csvDoms = slices.Collect(maps.Keys(csv.Rows))
 	var dbDoms []models.Domain
 
-	err := app.DB.Preload(clause.Associations).Where("domain in ?", csvDoms).Find(&dbDoms).Error
+	err := app.DB.Preload(clause.Associations).Preload("Outreach.Contact").Where("domain in ?", csvDoms).Find(&dbDoms).Error
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
@@ -40,7 +40,7 @@ func handleCreate(csv *csvParser.CsvItem) error {
 			}
 
 			var d models.Domain
-			err = app.DB.Preload(clause.Associations).Where("domain = ?", csvDom).First(&d).Error
+			err = app.DB.Preload(clause.Associations).Preload("Outreach.Contact").Where("domain = ?", csvDom).First(&d).Error
 			if err != nil {
 				log.Println(err)
 				continue

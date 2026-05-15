@@ -2,6 +2,7 @@ package domains
 
 import (
 	"domains/internal/middleware"
+	"domains/internal/models"
 	"domains/internal/utils"
 	"domains/pkg/csvParser"
 	"domains/pkg/linkParser"
@@ -27,6 +28,10 @@ func Handler(f fiber.Router) {
 		// flat headers
 		if len(body.Header) > 1 {
 			var flatH = utils.FlatCsv(body.Header)
+
+			var contact *models.Contact
+			contact.ReplaceHeaders(&flatH)
+
 			body.Header = [][]any{flatH}
 		}
 
@@ -51,10 +56,12 @@ func Handler(f fiber.Router) {
 	domains.Use(middleware.AuthToken())
 	domains.Post("/update", func(c fiber.Ctx) error {
 		csv := c.Locals("csv").(*csvParser.CsvItem)
+
 		err := handleCreate(csv)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).SendString("Err handlepost")
 		}
+
 		return c.Redirect().Status(fiber.StatusTemporaryRedirect).To("get")
 	})
 }

@@ -25,7 +25,7 @@ func (maj *Majestic) ToMap() map[string]any {
 	return res
 }
 func (maj *Majestic) ToStruct(m map[string]any) {
-	format.Format(maj.TF, m["TF"])
-	format.Format(maj.CF, m["CF"])
-	format.Format(maj.Topic, m["Topic"])
+	format.Format(&maj.TF, m["TF"])
+	format.Format(&maj.CF, m["CF"])
+	format.Format(&maj.Topic, m["Topic"])
 }

@@ -6,6 +6,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// sungle table slices fields must be separat tables that handle bulk values
+
 type Domain struct {
 	gorm.Model `json:"-"`
 	ID         uint    `gorm:"primaryKey" json:"id"`
@@ -18,13 +20,13 @@ type Domain struct {
 	Majestic *Majestic `json:"majestic,omitempty"`
 	Moz      *Moz      `json:"moz,omitempty"`
 	Yandex   *Yandex   `json:"yandex,omitempty"`
+	Outreach *Outreach `json:"outreach,omitempty"`
 
-	Accounts *[]Account `json:"accounts,omitempty"`
 	Links    *[]Link    `json:"links,omitempty"`
+	Accounts *[]Account `json:"accounts,omitempty"`
 	Groups   *[]Group   `gorm:"many2many:domain_groups;" json:"group,omitempty"`
 
-	Outreach   *Outreach `json:"outreach,omitempty"`
-	OutreachID *uint
+	ContactID *uint
 }
 
 func (d *Domain) ToMap() map[string]any {
@@ -39,15 +41,16 @@ func (d *Domain) ToMap() map[string]any {
 	res["Majestic"] = d.Majestic.ToMap()
 	res["Moz"] = d.Moz.ToMap()
 	res["Yandex"] = d.Yandex.ToMap()
+	res["Outreach"] = d.Outreach.ToMap()
 
 	return res
 }
 
 func (d *Domain) ToStruct(m map[string]any) {
 
-	f.Format(d.Domain, m["Domain"])
-	f.Format(d.Type, m["Type"])
-	f.Format(d.Comment, m["Comment"])
+	f.Format(&d.Domain, m["Domain"])
+	f.Format(&d.Type, m["Type"])
+	f.Format(&d.Comment, m["Comment"])
 
 	if a, ok := m["Ahrefs"].(map[string]any); ok {
 		if d.Ahrefs == nil {
@@ -75,5 +78,19 @@ func (d *Domain) ToStruct(m map[string]any) {
 			d.Moz = &Moz{}
 		}
 		d.Moz.ToStruct(moz)
+	}
+
+	if y, ok := m["Yandex"].(map[string]any); ok {
+		if d.Yandex == nil {
+			d.Yandex = &Yandex{}
+		}
+		d.Yandex.ToStruct(y)
+	}
+
+	if y, ok := m["Outreach"].(map[string]any); ok {
+		if d.Outreach == nil {
+			d.Outreach = &Outreach{}
+		}
+		d.Outreach.ToStruct(y)
 	}
 }

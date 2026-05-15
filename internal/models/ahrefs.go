@@ -19,12 +19,12 @@ type Ahrefs struct {
 }
 
 func (a *Ahrefs) ToStruct(m map[string]any) {
-	f.Format(a.DR, m["DR"])
-	f.Format(a.Traffic, m["Traffic"])
-	f.Format(a.Age, m["Age"])
-	f.Format(a.Geo, f.FormatGeo(m["Geo"])) // formats geo
-	f.Format(a.RefDomains, m["RefDomains"])
-	f.Format(a.OutDomains, m["OutDomains"])
+	f.Format(&a.DR, m["DR"])
+	f.Format(&a.Traffic, m["Traffic"])
+	f.Format(&a.Age, m["Age"])
+	f.Format(&a.Geo, f.FormatGeo(m["Geo"])) // formats geo
+	f.Format(&a.RefDomains, m["RefDomains"])
+	f.Format(&a.OutDomains, m["OutDomains"])
 }
 
 func (a *Ahrefs) ToMap() map[string]any {

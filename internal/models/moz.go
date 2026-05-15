@@ -30,7 +30,7 @@ func (moz *Moz) ToMap() map[string]any {
 }
 
 func (moz *Moz) ToStruct(m map[string]any) {
-	format.Format(moz.DA, m["DA"])
-	format.Format(moz.PA, m["PA"])
-	format.Format(moz.SpamScore, m["SpamScore"])
+	format.Format(&moz.DA, m["DA"])
+	format.Format(&moz.PA, m["PA"])
+	format.Format(&moz.SpamScore, m["SpamScore"])
 }

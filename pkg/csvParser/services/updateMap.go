@@ -1,26 +1,28 @@
 package services
 
 import (
-	"maps"
 	"strings"
 )
 
 // keyF - key Field which is row id for csv
-// !!mistake!! each map is uniq and shouldnt be merged
 func UpdateMap(csv *CsvItem, keyF string, m ...map[string]any) error {
-	acc := flatMap("", m[0], nil)
-
 	for _, v := range m {
-		maps.Copy(acc, flatMap("", v, nil))
-	}
+		fv := flatMap("", v, nil)
+		row := fv[keyF].(string)
 
-	// set values of flat map to csv
-	for k, v := range acc {
-		if i, ok := csv.Cols[k]; ok {
-			csv.Value[i][0] = v
+		if row == "" {
+			continue
+		}
+
+		if kr, ok := csv.Rows[fv[keyF].(string)]; ok {
+			for k, v2 := range fv {
+				if kc, ok := csv.Cols[k]; ok {
+					csv.Value[kr][kc] = v2
+				}
+			}
+
 		}
 	}
-
 	return nil
 }
 

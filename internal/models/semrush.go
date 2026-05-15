@@ -18,21 +18,21 @@ type Semrush struct {
 }
 
 func (s *Semrush) ToStruct(m map[string]any) {
-	format.Format(s.AS, m["AS"])
-	format.Format(s.Traffic, m["Traffic"])
-	format.Format(s.RefDomains, m["RefDomains"])
-	format.Format(s.OutDomains, m["OutDomains"])
-	format.Format(s.LinkFarm, m["LinkFarm"])
+	format.Format(&s.AS, m["AS"])
+	format.Format(&s.Traffic, m["Traffic"])
+	format.Format(&s.RefDomains, m["RefDomains"])
+	format.Format(&s.OutDomains, m["OutDomains"])
+	format.Format(&s.LinkFarm, m["LinkFarm"])
 }
 
 func (s *Semrush) ToMap() map[string]any {
 	var res = make(map[string]any)
-
-	res["AS"] = s.AS
-	res["Traffic"] = s.Traffic
-	res["RefDomains"] = s.RefDomains
-	res["OutDomains"] = s.OutDomains
-	res["LinkFarm"] = s.LinkFarm
-
+	if s != nil {
+		res["AS"] = s.AS
+		res["Traffic"] = s.Traffic
+		res["RefDomains"] = s.RefDomains
+		res["OutDomains"] = s.OutDomains
+		res["LinkFarm"] = s.LinkFarm
+	}
 	return res
 }

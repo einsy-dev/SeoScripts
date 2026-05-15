@@ -5,6 +5,9 @@ import "regexp"
 var rGeo = regexp.MustCompile(`[a-zA-Z]+`)
 
 func FormatGeo(geo any) any {
+	if geo == nil {
+		return nil
+	}
 	var res = rGeo.FindString(geo.(string))
 	if res == "" {
 		return nil

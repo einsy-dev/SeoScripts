@@ -7,8 +7,6 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-// group req - Email / WA / TG / Price
-
 func Redirect() fiber.Handler {
 	return func(c fiber.Ctx) error {
 		var body = struct {
