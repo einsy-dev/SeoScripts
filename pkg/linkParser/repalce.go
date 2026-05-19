@@ -2,6 +2,11 @@ package linkParser
 
 //websites that use subdomains for users / sites
 var replace = []string{
+	"wikipedia.org",
+	"forumieren.de",
+	"academia.edu",
+	"linkedin.com",
+	"quora.com",
 	"stck.me",
 	"webador.com",
 	"fc2.com",
@@ -274,7 +279,6 @@ var replace = []string{
 	"worldblogged.com",
 	"xzblogs.com",
 	"yomoblog.com",
-	"blogolize.com",
 	"gamma.site",
 	"gravatar.com",
 	"muragon.com",

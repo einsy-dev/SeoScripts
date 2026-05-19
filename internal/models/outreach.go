@@ -15,12 +15,15 @@ type Outreach struct {
 	Article *string
 	Image   *string
 
-	Contact *Contact
-
-	DomainID *uint `gorm:"uniqueIndex"`
+	Contact   *Contact
+	ContactID *uint
+	DomainID  *uint `gorm:"uniqueIndex"`
 }
 
 func (o *Outreach) ToMap() map[string]any {
+	if o == nil {
+		return nil
+	}
 	var res = make(map[string]any)
 
 	res["Comment"] = o.Comment
@@ -29,11 +32,7 @@ func (o *Outreach) ToMap() map[string]any {
 	res["Article"] = o.Article
 	res["Image"] = o.Image
 
-	if o.Contact != nil {
-		res["Contact"] = o.Contact.ToMap()
-	} else {
-		res["Contact"] = nil
-	}
+	res["Contact"] = o.Contact.ToMap()
 
 	return res
 }
@@ -47,10 +46,12 @@ func (o *Outreach) ToStruct(m map[string]any) {
 	f.Format(&o.Image, m["Image"])
 
 	if s, ok := m["Contact"].(map[string]any); ok {
-		if o.Contact == nil {
+		if o.Contact == nil || check(o.Contact, s) {
 			o.Contact = handleContact(s)
 		}
-		o.Contact.ToStruct(s)
+		if o.Contact != nil {
+			o.Contact.ToStruct(s)
+		}
 	}
 }
 
@@ -77,10 +78,26 @@ func handleContact(m map[string]any) *Contact {
 		hasIdentifier = true
 	}
 	if !hasIdentifier {
-		return c
+		return nil
 	}
 
 	query.FirstOrCreate(c)
 
 	return c
+}
+
+func check(c *Contact, m map[string]any) bool {
+	match := func(mapKey string, ptr *string) bool {
+		val, ok := m[mapKey].(string)
+		if !ok {
+			return ptr == nil // match if both map value doesn't exist and db string is nil
+		}
+		return ptr != nil && *ptr == val
+	}
+
+	if match("Email", c.Email) || match("WhatsApp", c.WhatsApp) || match("Telegram", c.Telegram) || match("Phone", c.Phone) {
+		return false
+	}
+
+	return true
 }

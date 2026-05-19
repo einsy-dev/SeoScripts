@@ -16,6 +16,9 @@ type Majestic struct {
 }
 
 func (maj *Majestic) ToMap() map[string]any {
+	if maj == nil {
+		return nil
+	}
 	var res = make(map[string]any)
 
 	res["TF"] = maj.TF

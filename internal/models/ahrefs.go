@@ -28,6 +28,10 @@ func (a *Ahrefs) ToStruct(m map[string]any) {
 }
 
 func (a *Ahrefs) ToMap() map[string]any {
+	if a == nil {
+		return nil
+	}
+
 	var res = make(map[string]any)
 
 	res["DR"] = a.DR

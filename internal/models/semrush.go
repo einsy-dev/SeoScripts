@@ -26,13 +26,14 @@ func (s *Semrush) ToStruct(m map[string]any) {
 }
 
 func (s *Semrush) ToMap() map[string]any {
-	var res = make(map[string]any)
-	if s != nil {
-		res["AS"] = s.AS
-		res["Traffic"] = s.Traffic
-		res["RefDomains"] = s.RefDomains
-		res["OutDomains"] = s.OutDomains
-		res["LinkFarm"] = s.LinkFarm
+	if s == nil {
+		return nil
 	}
+	var res = make(map[string]any)
+	res["AS"] = s.AS
+	res["Traffic"] = s.Traffic
+	res["RefDomains"] = s.RefDomains
+	res["OutDomains"] = s.OutDomains
+	res["LinkFarm"] = s.LinkFarm
 	return res
 }

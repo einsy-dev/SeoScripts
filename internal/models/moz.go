@@ -16,15 +16,14 @@ type Moz struct {
 }
 
 func (moz *Moz) ToMap() map[string]any {
-	var res = make(map[string]any)
-
-	if moz != nil {
-		res["DA"] = moz.DA
-		res["PA"] = moz.PA
-		res["SpamScore"] = moz.SpamScore
-	} else {
+	if moz == nil {
 		return nil
 	}
+	var res = make(map[string]any)
+
+	res["DA"] = moz.DA
+	res["PA"] = moz.PA
+	res["SpamScore"] = moz.SpamScore
 
 	return res
 }

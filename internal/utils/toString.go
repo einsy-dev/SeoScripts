@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func ToString(v any) *string {
@@ -31,6 +32,8 @@ func ToString(v any) *string {
 	if res == "" || res == "<nil>" {
 		return nil
 	}
+
+	res = strings.TrimSpace(res)
 
 	return &res
 }

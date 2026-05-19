@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Links to this domain "domain id" and not links from it !!!
 type Link struct {
 	gorm.Model `json:"-"`
 	ID         uint          `gorm:"primaryKey" json:"id"`

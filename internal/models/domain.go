@@ -30,6 +30,10 @@ type Domain struct {
 }
 
 func (d *Domain) ToMap() map[string]any {
+	if d == nil {
+		return nil
+	}
+
 	var res = make(map[string]any)
 
 	res["Domain"] = d.Domain

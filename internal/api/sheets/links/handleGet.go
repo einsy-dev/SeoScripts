@@ -1,4 +1,4 @@
-package domains
+package links
 
 import (
 	"domains/internal/app"

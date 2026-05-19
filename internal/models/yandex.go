@@ -14,14 +14,12 @@ type Yandex struct {
 }
 
 func (y *Yandex) ToMap() map[string]any {
-	var res = make(map[string]any)
-
-	if y != nil {
-		res["X"] = y.X
-	} else {
+	if y == nil {
 		return nil
 	}
 
+	var res = make(map[string]any)
+	res["X"] = y.X
 	return res
 }
 

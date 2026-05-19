@@ -15,12 +15,13 @@ type Contact struct {
 	Pbn      *bool   `gorm:"default:false" json:"pbn"`
 	Comment  string  `json:"comment"`
 
-	Domains *[]Domain `json:"domains"`
-
-	OutreachID *uint
+	Outreach *[]Outreach `json:"-"`
 }
 
 func (c *Contact) ToMap() map[string]any {
+	if c == nil {
+		return nil
+	}
 	var res = make(map[string]any)
 
 	res["Comment"] = c.Comment
@@ -35,7 +36,7 @@ func (c *Contact) ToMap() map[string]any {
 
 func (c *Contact) ToStruct(m map[string]any) {
 	f.Format(&c.Comment, m["Comment"])
-	f.Format(&c.Email, m["Email"])
+	f.Format(&c.Email, f.ToLower(m["Email"]))
 	f.Format(&c.WhatsApp, m["WhatsApp"])
 	f.Format(&c.Telegram, m["Telegram"])
 	f.Format(&c.Phone, m["Phone"])
