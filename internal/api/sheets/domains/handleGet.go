@@ -29,10 +29,9 @@ func handleGet(csv *csvParser.CsvItem) error {
 		if dIndex == -1 {
 			continue
 		}
-		var dom = dbDoms[dIndex].ToMap()
 
+		var dom = dbDoms[dIndex].ToMap()
 		if dom != nil {
-			// Usage:
 			csv.UpdateMap(dom)
 		}
 	}

@@ -1,22 +1,17 @@
-{{ define "layout" }}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script
-      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js"
-      integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
-      crossorigin="anonymous"
-    ></script>
-  </head>
-  <body>
-    {{ template "content" . }} {{ template "client-clock" . }}
-  </body>
-</html>
+{{ define "main-full" }}
+  {{ template "header" . }}
+  {{ template "main" . }}
+  {{ template "footer" . }}
 {{ end }} 
-{{ define "content" }}
-<div class="">EXPLORING?</div>
-<div hx-get="/update" hx-trigger="click">Click to update {{ .Name }}</div>
+
+{{ define "main" }}
+<div class="p-6 max-w-6xl mx-auto space-y-6">
+  <!-- FILTER AND SEARCH CONTROLS -->
+  <!-- HTMX triggers an AJAX GET request automatically when any input changes, with a 300ms delay on typing -->
+
+  {{ template "filter" . }}
+
+  <!-- DATA TABLE -->
+  {{ template "table" . }}
+</div>
 {{ end }}

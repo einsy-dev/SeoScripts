@@ -3,7 +3,7 @@ package csv
 import (
 	"domains/internal/utils"
 	"domains/pkg/csvParser"
-	"domains/pkg/csvParser/services"
+	u "domains/pkg/csvParser/services/utils"
 	"domains/pkg/linkParser"
 	"encoding/json"
 	"strings"
@@ -25,14 +25,14 @@ func Handler(app fiber.Router) {
 		}
 
 		if m, ok := body.(string); ok {
-			res, err = services.CsvRead(m)
+			res, err = u.Read(m)
 			if err != nil {
 				return c.Status(fiber.StatusBadRequest).SendString("err read csv")
 			}
 		} else if m, ok := body.([]any); ok {
 			nr, _ := utils.Assert[[][][]string](res)
 			for _, v := range m {
-				csv, err := services.CsvRead(v.(string))
+				csv, err := u.Read(v.(string))
 				if err != nil {
 					return c.Status(fiber.StatusBadRequest).SendString("err read csv")
 				}

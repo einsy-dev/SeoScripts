@@ -1,0 +1,52 @@
+{{ define "filter" }}
+<form
+  hx-get="/api/users"
+  hx-trigger="change, input delay:300ms"
+  hx-target="#table-results"
+  hx-swap="innerHTML"
+  class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
+>
+  <!-- Text Search Input -->
+  <div class="space-y-1.5">
+    <label for="search" class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Search Users</label>
+    <div class="relative">
+      <input
+        type="text"
+        id="search"
+        name="search"
+        placeholder="Name, email, or role..."
+        class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all placeholder-slate-400"
+      />
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          ></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Select Multiple Dropdown -->
+  <div class="space-y-1.5 md:col-span-2">
+    <div class="flex justify-between items-center">
+      <label for="status" class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Filter by Status</label>
+      <span class="text-[11px] text-slate-400 italic">Hold Ctrl / ⌘ to pick multiple</span>
+    </div>
+    <select
+      id="status"
+      name="status"
+      multiple
+      class="w-full px-3 py-1.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-[38px] h-[38px]"
+    >
+      <option value="active" class="py-1">Active</option>
+      <option value="inactive" class="py-1">Inactive</option>
+      <option value="pending" class="py-1">Pending</option>
+      <option value="suspended" class="py-1">Suspended</option>
+    </select>
+  </div>
+</form>
+{{ end }}

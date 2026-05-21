@@ -37,6 +37,25 @@ func (o *Outreach) ToMap() map[string]any {
 	return res
 }
 
+func isNew(c *Contact, m map[string]any) bool {
+	match := func(mapKey string, ptr *string) bool {
+		val, ok := m[mapKey].(string)
+		if !ok || ptr == nil {
+			return false
+		}
+		return *ptr == val
+	}
+
+	if match("Email", c.Email) ||
+		match("WhatsApp", c.WhatsApp) ||
+		match("Telegram", c.Telegram) ||
+		match("Phone", c.Phone) {
+		return false
+	}
+
+	return true
+}
+
 func (o *Outreach) ToStruct(m map[string]any) {
 
 	f.Format(&o.Comment, m["Comment"])
@@ -46,58 +65,54 @@ func (o *Outreach) ToStruct(m map[string]any) {
 	f.Format(&o.Image, m["Image"])
 
 	if s, ok := m["Contact"].(map[string]any); ok {
-		if o.Contact == nil || check(o.Contact, s) {
+		if o.Contact == nil || isNew(o.Contact, s) {
 			o.Contact = handleContact(s)
 		}
 		if o.Contact != nil {
 			o.Contact.ToStruct(s)
+			o.ContactID = &o.Contact.ID
 		}
+
 	}
 }
 
 func handleContact(m map[string]any) *Contact {
 	c := &Contact{}
-	query := app.DB.Model(&Contact{})
 
-	hasIdentifier := false
+	// Create a structural query to find any existing record matching the identifiers
+	var conditions []string
+	var values []any
 
 	if val, ok := m["Email"].(string); ok && val != "" {
-		query = query.Or("email = ?", val)
-		hasIdentifier = true
+		conditions = append(conditions, "email = ?")
+		values = append(values, val)
 	}
 	if val, ok := m["WhatsApp"].(string); ok && val != "" {
-		query = query.Or("whats_app = ?", val)
-		hasIdentifier = true
+		conditions = append(conditions, "whats_app = ?")
+		values = append(values, val)
 	}
 	if val, ok := m["Telegram"].(string); ok && val != "" {
-		query = query.Or("telegram = ?", val)
-		hasIdentifier = true
+		conditions = append(conditions, "telegram = ?")
+		values = append(values, val)
 	}
 	if val, ok := m["Phone"].(string); ok && val != "" {
-		query = query.Or("phone = ?", val)
-		hasIdentifier = true
+		conditions = append(conditions, "phone = ?")
+		values = append(values, val)
 	}
-	if !hasIdentifier {
+
+	if len(conditions) == 0 {
 		return nil
 	}
 
-	query.FirstOrCreate(c)
-
-	return c
-}
-
-func check(c *Contact, m map[string]any) bool {
-	match := func(mapKey string, ptr *string) bool {
-		val, ok := m[mapKey].(string)
-		if !ok {
-			return ptr == nil // match if both map value doesn't exist and db string is nil
+	queryStr := conditions[0]
+	for i := 1; i < len(conditions); i++ {
+		queryStr += " OR " + conditions[i]
+	}
+	err := app.DB.Where(queryStr, values...).First(c).Error
+	if err != nil {
+		if createErr := app.DB.Create(c).Error; createErr != nil {
+			return nil
 		}
-		return ptr != nil && *ptr == val
 	}
-
-	if match("Email", c.Email) || match("WhatsApp", c.WhatsApp) || match("Telegram", c.Telegram) || match("Phone", c.Phone) {
-		return false
-	}
-
-	return true
+	return c
 }

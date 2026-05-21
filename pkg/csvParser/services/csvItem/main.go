@@ -1,8 +1,6 @@
-package services
+package csvItem
 
-import (
-	"errors"
-)
+import "errors"
 
 type Options struct {
 	Keys *[]string

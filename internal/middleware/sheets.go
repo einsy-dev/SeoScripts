@@ -33,6 +33,7 @@ func Sheets() fiber.Handler {
 		}
 
 		csv, err := csvParser.Parse(slices.Concat(body.Header, body.Data), csvParser.Options{})
+
 		csv.FormatRows(func(row string) string {
 			return linkParser.Domain(row)
 		})

@@ -1,4 +1,4 @@
-package services
+package csvItem
 
 func Update(csv ...*CsvItem) error {
 	for _, csvItem := range csv[1:] { // iterate each csv struct

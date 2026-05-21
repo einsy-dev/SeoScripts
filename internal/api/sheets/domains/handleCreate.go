@@ -59,7 +59,7 @@ func handleCreate(csv *csvParser.CsvItem) error {
 
 		dbDoms[dIndex].ToStruct(csvMap[csv.Rows[csvDom]-1])
 
-		err := app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Save(&dbDoms[dIndex]).Error // optimize for batch upsert
+		err := app.DB.Session(&gorm.Session{FullSaveAssociations: true}).Omit("Outreach.Contact").Save(&dbDoms[dIndex]).Error
 
 		if err != nil {
 			return errors.New("Error saving data " + err.Error())

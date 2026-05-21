@@ -1,11 +1,14 @@
 package services
 
 import (
+	"domains/pkg/csvParser/services/csvItem"
 	"slices"
 )
 
-func Parse(data [][]any, opt Options) (*CsvItem, error) {
-	res := CsvItem{Value: data, Cols: map[string]int{}, Rows: map[string]int{}}
+// FIX!: add handle empty columns (now it shifts index)
+
+func Parse(data [][]any, opt csvItem.Options) (*csvItem.CsvItem, error) {
+	res := csvItem.CsvItem{Value: data, Cols: map[string]int{}, Rows: map[string]int{}}
 
 	// get keys (columns)
 	for i, v := range data[0] {
