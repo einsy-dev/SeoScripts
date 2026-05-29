@@ -1,0 +1,141 @@
+{{define "select"}}
+<client-select class="relative block w-64 font-sans text-sm text-gray-800">
+  <!-- Trigger Button (What the user sees first) -->
+  <button type="button" data-role="trigger" class="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-4 py-2 text-left shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <span data-role="label">Select options...</span>
+    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd" />
+    </svg>
+  </button>
+
+  <!-- Custom Dropdown Menu -->
+  <div data-role="menu" class="hidden absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+    <ul class="flex flex-col">
+      {{ range $index, $el := .Options}}
+      <li data-value="{{ $el }}" class="relative cursor-pointer select-none px-4 py-2 hover:bg-blue-600 hover:text-white transition-colors duration-150">
+        {{ $el }}
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+  
+  <!-- Hidden Native Select (Listens for external form interactions) -->
+  <select name="{{ .Name }}" multiple class="hidden">
+    {{ range $index, $el := .Options}}
+    <option value="{{ $el }}">{{ $el }}</option>
+    {{ end }}
+  </select>
+</client-select>
+
+<script>
+  {
+    class ClientSelect extends HTMLElement {
+      connectedCallback() {
+        // Elements
+        this.trigger = this.querySelector('[data-role="trigger"]');
+        this.menu = this.querySelector('[data-role="menu"]');
+        this.label = this.querySelector('[data-role="label"]');
+        this.nativeSelect = this.querySelector('select');
+        this.optionsList = this.querySelectorAll('[data-role="menu"] li');
+
+        // State Tracking
+        this.selectedValues = [];
+
+        // UI Interactions
+        this.trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.toggleMenu();
+        });
+
+        this.optionsList.forEach(item => {
+          item.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.handleCustomUiSelect(item.getAttribute("data-value"));
+          });
+        });
+
+        // Click outside handler
+        this.globalClickClose = (e) => {
+          if (!this.contains(e.target)) this.closeMenu();
+        };
+        document.addEventListener("click", this.globalClickClose);
+
+        // --- BACKWARD SYNC LOGIC ---
+        // 1. Listen for native "change" events (dispatched by other JS frameworks)
+        this.nativeSelect.addEventListener("change", () => this.syncFromNativeSelect());
+
+        // 2. Watch attributes for form resets or server-side pre-selections
+        this.observer = new MutationObserver(() => this.syncFromNativeSelect());
+        this.observer.observe(this.nativeSelect, { subtree: true, attributes: true, attributeFilter: ['selected'] });
+
+        // Initial setup run to parse any values preset by Go template engines
+        this.syncFromNativeSelect();
+      }
+
+      disconnectedCallback() {
+        document.removeEventListener("click", this.globalClickClose);
+        if (this.observer) this.observer.disconnect();
+      }
+
+      toggleMenu() { this.menu.classList.toggle("hidden"); }
+      closeMenu() { this.menu.classList.add("hidden"); }
+
+      // When the custom UI list is clicked
+      handleCustomUiSelect(value) {
+        if (this.selectedValues.includes(value)) {
+          this.selectedValues = this.selectedValues.filter(v => v !== value);
+        } else {
+          this.selectedValues.push(value);
+        }
+
+        this.syncToNativeSelect();
+        this.updateUI();
+      }
+
+      // Sync custom state down to hidden HTML form input
+      syncToNativeSelect() {
+        Array.from(this.nativeSelect.options).forEach(option => {
+          option.selected = this.selectedValues.includes(option.value);
+        });
+        
+        // Let form libraries (like HTMX or Alpine) know the native data updated
+        this.nativeSelect.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+      // Sync internal state *from* the hidden HTML input up to custom UI
+      syncFromNativeSelect() {
+        this.selectedValues = Array.from(this.nativeSelect.options)
+          .filter(option => option.selected)
+          .map(option => option.value);
+
+        this.updateUI();
+      }
+
+      updateUI() {
+        // Update item highlight classes
+        this.optionsList.forEach(item => {
+          const val = item.getAttribute("data-value");
+          if (this.selectedValues.includes(val)) {
+            item.classList.add("bg-blue-50", "text-blue-600", "font-semibold");
+          } else {
+            item.classList.remove("bg-blue-50", "text-blue-600", "font-semibold");
+          }
+        });
+
+        // Update button text display
+        if (this.selectedValues.length === 0) {
+          this.label.textContent = "Select options...";
+          this.label.classList.remove("text-gray-900");
+        } else {
+          this.label.textContent = this.selectedValues.join(", ");
+          this.label.classList.add("text-gray-900");
+        }
+      }
+    }
+
+    if (!customElements.get("client-select")) {
+      customElements.define("client-select", ClientSelect);
+    }
+  }
+</script>
+{{end}}
