@@ -53,7 +53,7 @@ func Handler(app fiber.Router) {
 		return c.Next()
 	})
 
-	csv.Get("/parse", func(c fiber.Ctx) error {
+	csv.Post("/parse", func(c fiber.Ctx) error {
 		var query = struct {
 			keys   []string
 			format string
@@ -65,37 +65,41 @@ func Handler(app fiber.Router) {
 
 		var res *csvParser.CsvItem
 
-		var data [][]any
+		var data any
 		err := c.Bind().Body(&data)
 
 		if err != nil {
 			c.Status(fiber.StatusBadRequest).SendString("Invalid body")
 		}
 
-		res, err = csvParser.Parse(data, csvParser.Options{Keys: &query.keys})
-		if query.format == "domain" {
-			res.FormatRows(func(row string) string {
-				return linkParser.Domain(row)
-			})
-		}
+		if d, ok := data.([][]any); !ok {
+			return c.Status(fiber.StatusBadRequest).SendString("Bad Request")
+		} else {
+			res, err = csvParser.Parse(d, csvParser.Options{Keys: &query.keys})
+			if query.format == "domain" {
+				res.FormatRows(func(row string) string {
+					return linkParser.Domain(row)
+				})
+			}
 
-		if query.preset == "seo" {
-			res.FormatCols(func(row string) string {
-				if k, ok := ColsForamtTable[row]; ok {
-					return k
-				}
-				return row
-			})
-		}
+			if query.preset == "seo" {
+				res.FormatCols(func(row string) string {
+					if k, ok := ColsForamtTable[row]; ok {
+						return k
+					}
+					return row
+				})
+			}
 
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(res)
-		}
+			if err != nil {
+				return c.Status(fiber.StatusBadRequest).JSON(res)
+			}
 
-		return c.Status(fiber.StatusOK).JSON(res.Value)
+			return c.Status(fiber.StatusOK).JSON(res.Value)
+		}
 	})
 
-	csv.Get("/join", func(c fiber.Ctx) error {
+	csv.Post("/join", func(c fiber.Ctx) error {
 		var query = struct {
 			keys   []string
 			format string
@@ -150,7 +154,6 @@ func Handler(app fiber.Router) {
 				return row
 			})
 		}
-
 		return c.Status(fiber.StatusOK).JSON(res.Value)
 	})
 }

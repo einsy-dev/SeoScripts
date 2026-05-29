@@ -2,8 +2,9 @@ package linkParser
 
 //websites that use subdomains for users / sites
 var replace = []string{
+	"boardhost.com",
+	"smore.com",
 	"webador.co.uk",
-	"google.com",
 	"pages.dev",
 	"squarespace.com",
 	"wikipedia.org",

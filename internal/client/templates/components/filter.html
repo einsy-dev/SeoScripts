@@ -1,14 +1,15 @@
 {{ define "filter" }}
 <form
+  id="filter-form"
   hx-get="/api/users"
-  hx-trigger="change, input delay:300ms"
+  hx-trigger="change delay:50ms, input delay:300ms from:#search"
   hx-target="#table-results"
   hx-swap="innerHTML"
+  hx-push-url="true"
   class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
 >
   <!-- Text Search Input -->
   <div class="space-y-1.5">
-    <label for="search" class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Search Users</label>
     <div class="relative">
       <input
         type="text"
@@ -30,23 +31,17 @@
     </div>
   </div>
 
-  <!-- Select Multiple Dropdown -->
-  <div class="space-y-1.5 md:col-span-2">
-    <div class="flex justify-between items-center">
-      <label for="status" class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Filter by Status</label>
-      <span class="text-[11px] text-slate-400 italic">Hold Ctrl / ⌘ to pick multiple</span>
-    </div>
-    <select
-      id="status"
-      name="status"
-      multiple
-      class="w-full px-3 py-1.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-[38px] h-[38px]"
-    >
-      <option value="active" class="py-1">Active</option>
-      <option value="inactive" class="py-1">Inactive</option>
-      <option value="pending" class="py-1">Pending</option>
-      <option value="suspended" class="py-1">Suspended</option>
-    </select>
-  </div>
+  <!-- Custom HTMX Dropdown Component -->
+  <div class="space-y-1.5 md:col-span-2">{{ template "select" . }}</div>
 </form>
 {{ end }}
+<!-- <script>
+  // Close the custom dropdown if clicking outside of it
+  window.addEventListener("click", function (e) {
+    const container = document.getElementById("dropdown-container");
+    const menu = document.getElementById("dropdown-menu");
+    if (container && !container.contains(e.target)) {
+      menu.classList.add("hidden");
+    }
+  });
+</script> -->

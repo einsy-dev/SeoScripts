@@ -1,17 +1,4 @@
-{{ define "main-full" }}
-  {{ template "header" . }}
-  {{ template "main" . }}
-  {{ template "footer" . }}
-{{ end }} 
-
-{{ define "main" }}
-<div class="p-6 max-w-6xl mx-auto space-y-6">
-  <!-- FILTER AND SEARCH CONTROLS -->
-  <!-- HTMX triggers an AJAX GET request automatically when any input changes, with a 300ms delay on typing -->
-
-  {{ template "filter" . }}
-
-  <!-- DATA TABLE -->
-  {{ template "table" . }}
-</div>
+{{ define "main-full" }} {{ template "header" . }} {{ template "main" . }} {{ template "footer" . }} {{ end }} {{ define
+"main" }}
+<div class="p-6 max-w-6xl mx-auto space-y-6">This is server for seo database</div>
 {{ end }}
